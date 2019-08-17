@@ -8,5 +8,8 @@
   },
   "author": "Couragium Solutions S.L.",
   "license": "ISC",
-  "dependencies": {}
+  "dependencies": {
+    "@types/node": "^12.7.2",
+    "express": "^4.17.1"
+  }
 }

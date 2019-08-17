@@ -3,10 +3,10 @@ let {resizeImage, submitToGoogle, submitToFacebook, submitToYellowPages} = requi
 var allDirectoriesList = "Google, Facebook, Yellow Pages";
 
 
-class Submitter {
+module.exports = class Submitter {
 	submitSpam(data, directories, allDirectories, extraData) {
-		data.start_date = extraData.start_date;
-		data.end_date = extraData.end_date;
+		if(extraData.start_date) data.start_date = extraData.start_date;
+		if(extraData.end_date) data.end_date = extraData.end_date;
 
 		if(!data.end_date || !data.end_date) {
 			data.type = "FOREVER";
@@ -18,23 +18,37 @@ class Submitter {
 			directories = allDirectoriesList.split(',').map(dir => dir.trim());
 		}
 
-		resizeImages(data);
+		let submittingDirectories = {};
 
-		var promises = [];
+		resizeImages(data)
+		.then(() => {
+			var promises = [];
 
-		directories.filter(a => a == "Google").map(() => submitToGoogle(data)).forEach(promise => promises.push(promise));
-		directories.filter(a => a == "Facebook").map(() => submitToGoogle(data)).forEach(promise => promises.push(promise));
-		directories.filter(a => a == "Yellow Pages").map(() => submitToGoogle(data)).forEach(promise => promises.push(promise));	
-	
-		return Promise.all(promises);
+			directories.filter(a => a == "Google").map(() => submitToGoogle(data)).forEach(promise => {promises.push(promise); submittingDirectories["Google"] = promise});
+			directories.filter(a => a == "Facebook").map(() => submitToGoogle(data)).forEach(promise => {promises.push(promise); submittingDirectories["Facebook"] = promise});
+			directories.filter(a => a == "Yellow Pages").map(() => submitToGoogle(data)).forEach(promise => {promises.push(promise); submittingDirectories["Yellow Pages"] = promise});	
+		
+			return Promise.all(promises);
+		})
+		.then(() => {
+			return Promise.all(Object.keys(submittingDirectories).map(key => submittingDirectories[key].then(result => submittingDirectories[key] = result)));
+		})
+		.then(() => {
+			Object.keys(submittingDirectories).map(key => {
+				return {
+					directory: key,
+					status: submittingDirectories[key],
+				}
+			});
+		});
 	}
 }
 
-function resizeImages(data) {
+async function resizeImages(data) {
 	var index = 0;
 
 	data.images.forEach(image => {
-		data.images[index++] = resizeImage(image);
+		data.images[index++] = await resizeImage(image);
 	});
 }
 

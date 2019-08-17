@@ -8,7 +8,5 @@
   },
   "author": "Couragium Solutions S.L.",
   "license": "ISC",
-  "dependencies": {
-    "jasmine": "^3.4.0"
-  }
+  "dependencies": {}
 }

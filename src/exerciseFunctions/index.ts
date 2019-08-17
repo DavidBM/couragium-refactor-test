@@ -19,14 +19,14 @@ export function getPromotionInstance(id: number): Promise<Promotion | null> {
 		start_date: new Date('25-07-2018'),
 		end_date: new Date('25-07-2021'),
 		type: 'FOREVER' as PromotionType,
-		images: [Buffer.from('image1'), Buffer.from('image2'), Buffer.from('image3')],
+		images: new Array(12).fill(Buffer.from('image1')),
 	});
 }
 
 export function resizeImage(image: Buffer): Buffer {
 	const date = new Date();
 
-	while ( (new Date()).getTime() - date.getTime() < 3000 ) {}
+	while ( (new Date()).getTime() - date.getTime() < 500 ) {}
 
 	return image;
 }

@@ -20,13 +20,13 @@ module.exports = class Submitter {
 
 		let submittingDirectories = {};
 
-		resizeImages(data)
+		return resizeImages(data)
 		.then(() => {
 			var promises = [];
 
-			directories.filter(a => a == "Google").map(() => submitToGoogle(data)).forEach(promise => {promises.push(promise); submittingDirectories["Google"] = promise});
-			directories.filter(a => a == "Facebook").map(() => submitToGoogle(data)).forEach(promise => {promises.push(promise); submittingDirectories["Facebook"] = promise});
-			directories.filter(a => a == "Yellow Pages").map(() => submitToGoogle(data)).forEach(promise => {promises.push(promise); submittingDirectories["Yellow Pages"] = promise});	
+			directories.filter(a => a == "Google").map(() => submitToGoogle(data).catch(e => e)).forEach(promise => {promises.push(promise); submittingDirectories["Google"] = promise});
+			directories.filter(a => a == "Facebook").map(() => submitToFacebook(data).catch(e => e)).forEach(promise => {promises.push(promise); submittingDirectories["Facebook"] = promise});
+			directories.filter(a => a == "Yellow Pages").map(() => submitToYellowPages(data).catch(e => e)).forEach(promise => {promises.push(promise); submittingDirectories["Yellow Pages"] = promise});	
 		
 			return Promise.all(promises);
 		})
@@ -34,7 +34,7 @@ module.exports = class Submitter {
 			return Promise.all(Object.keys(submittingDirectories).map(key => submittingDirectories[key].then(result => submittingDirectories[key] = result)));
 		})
 		.then(() => {
-			Object.keys(submittingDirectories).map(key => {
+			return Object.keys(submittingDirectories).map(key => {
 				return {
 					directory: key,
 					status: submittingDirectories[key],
@@ -47,7 +47,7 @@ module.exports = class Submitter {
 async function resizeImages(data) {
 	var index = 0;
 
-	data.images.forEach(image => {
+	data.images.forEach(async image => {
 		data.images[index++] = await resizeImage(image);
 	});
 }

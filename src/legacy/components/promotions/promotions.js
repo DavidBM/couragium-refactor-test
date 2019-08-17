@@ -5,7 +5,7 @@ let submissionService = new SubmissionService();
 
 class Promotion  {
 	submit(req, res) {
-		exerciseFunctions.getPromotionInstance(req.params.promotionId)
+		exerciseFunctions.getPromotionInstance(parseInt(req.params.promotionId))
 		.then((promotion) => {
 			if(!promotion) throw new Error("No promotion found");
 
@@ -24,15 +24,24 @@ class Promotion  {
 
 			return submissionService.submitSpam(promotion, directories, allDirectories, extraData);
 		})
+		.then(result => {
+			res.status(200);
+			res.setHeader('Content-Type', 'application/json');
+			res.end(JSON.stringify(result));
+		})
 		.catch(e => {
-			if(e.message && e.message === "No promotion found") {
+			console.log(e)
+			if(e && e.message && e.message === "No promotion found") {
 				res.status(400);
-				res.send(JSON.stringify({message: "Not found"}));
+				res.setHeader('Content-Type', 'application/json');
+				res.end(JSON.stringify({message: "Not found"}));
 			} else {
 				res.status(500);
-				res.send(JSON.stringify({message: "Internal Error"}));
+				res.setHeader('Content-Type', 'application/json');
+				res.end(JSON.stringify({message: "Internal Error"}));
 			}
-		});
+		})
+		.catch(e => console.log(e));
 	}
 }
 

@@ -1,0 +1,14 @@
+{
+  "name": "test-prog-refactor",
+  "version": "1.0.0",
+  "description": "Couragium test for applicants",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "jasmine"
+  },
+  "author": "Couragium Solutions S.L.",
+  "license": "ISC",
+  "dependencies": {
+    "jasmine": "^3.4.0"
+  }
+}

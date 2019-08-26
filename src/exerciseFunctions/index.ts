@@ -16,8 +16,8 @@ export function getPromotionInstance(id: number): Promise<Promotion | null> {
 	if (id !== 42) return Promise.resolve(null);
 
 	return Promise.resolve({
-		start_date: new Date('25-07-2018'),
-		end_date: new Date('25-07-2021'),
+		start_date: new Date('2018-07-25'),
+		end_date: new Date('2021-07-25'),
 		type: 'FOREVER' as PromotionType,
 		images: new Array(12).fill(Buffer.from('image1')),
 	});
